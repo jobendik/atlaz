@@ -135,12 +135,30 @@ export class Stage {
 
     next.root.style.display = "";
     next.root.classList.remove("show");
-    // next frame: fade the (now sole) scene in from black
-    requestAnimationFrame(() => next.root.classList.add("show"));
+    void next.root.offsetWidth; // commit opacity:0 so the fade always animates
+    next.root.classList.add("show");
     this.activeId = id;
   }
 
-  /** Swap the on-screen drawing (crossfade). */
+  /** Warm the HTTP cache + decode for every scene's layers so a scene never
+   *  "pops in" layer-by-layer when first shown (and so seamless-scroll tile
+   *  widths measure correctly on the first frame). Fire-and-forget. */
+  warm() {
+    for (const def of Object.values(this.sceneDefs)) {
+      for (const L of def.layers) {
+        const im = new Image();
+        im.decoding = "async";
+        im.src = L.src;
+        im.decode?.().catch(() => {});
+      }
+    }
+  }
+
+  /** Swap the on-screen drawing.
+   *  The new image is fully DECODED before the figure is revealed, and the
+   *  src is only changed while the figure is hidden — otherwise the previous
+   *  drawing flashes on the new background for a frame before the new one
+   *  decodes. */
   setCharacter(who: string | null, char?: Character) {
     if (who === this.curChar) return;
     this.curChar = who;
@@ -149,9 +167,11 @@ export class Stage {
       this.charGlow.classList.remove("show");
       return;
     }
-    const swap = () => {
+
+    const reveal = () => {
+      // bail if another swap superseded this one while decoding
+      if (this.curChar !== who) return;
       this.charImg.src = char.img;
-      // apply placement (everything except transform, which we compose live)
       const place = char.place;
       this.charBaseTransform = place.transform || "translateX(-50%)";
       for (const k of ["height", "width", "bottom", "top", "left", "right"] as const) {
@@ -164,12 +184,22 @@ export class Stage {
       this.charEl.classList.add("show");
       this.charGlow.classList.add("show");
     };
+
+    // decode off-screen first so the reveal never shows a half/stale image
+    const pre = new Image();
+    pre.decoding = "async";
+    pre.src = char.img;
+    const ready: Promise<unknown> = pre.decode ? pre.decode().catch(() => {}) : Promise.resolve();
+
     if (this.charEl.classList.contains("show")) {
+      // fade the current drawing out, then bring the decoded new one in
       this.charEl.classList.remove("show");
       this.charGlow.classList.remove("show");
-      window.setTimeout(swap, 420);
+      window.setTimeout(() => void ready.then(reveal), 450);
     } else {
-      swap();
+      this.charEl.classList.remove("show");
+      this.charGlow.classList.remove("show");
+      void ready.then(reveal);
     }
   }
 

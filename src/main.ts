@@ -561,6 +561,15 @@ function loop() {
 window.addEventListener("load", () => {
   particles.resize();
   buildPips();
+  // decode every scene + character image up front so transitions never pop
+  // or flash a stale frame (the user reads the title while this runs)
+  stage.warm();
+  for (const c of Object.values(CAST)) {
+    const im = new Image();
+    im.decoding = "async";
+    im.src = c.img;
+    im.decode?.().catch(() => {});
+  }
   queue = STORY.slice();
   const veil = $("veil");
   veil.style.opacity = "0";
