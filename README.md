@@ -68,9 +68,9 @@ src/
 
 ## The teaser, as written
 
-1. **The Misty Forest (night)** — you meet **Liliveth**, the last of a forgotten
+1. **The Misty Forest (night)** — you meet **Aziel**, the last of a forgotten
    house. A choice colours how she opens up. *(seamless forest parallax)*
-2. **The Cold Twilight** — **Atlaz**, who never stopped looking up, holds the
+2. **The Cold Twilight** — **Atlas**, who never stopped looking up, holds the
    last falling star. Another choice. *(the Dawn parallax pack recoloured to
    night)*
 3. **The Crimson Dawn** — the same sky in natural light: the branching futures

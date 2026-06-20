@@ -41,7 +41,7 @@ export const SCENES: Record<string, Scene> = {
     ],
   },
 
-  // the same Dawn parallax pack, recolored to a cold twilight — where Atlaz
+  // the same Dawn parallax pack, recolored to a cold twilight — where Atlas
   // watches the broken night sky. (seamless scroll; sun sits deep so it barely
   // drifts.) Demonstrates the pack's "alter the lighting" feature.
   dusk: {
@@ -88,7 +88,7 @@ export const SCENES: Record<string, Scene> = {
    ============================================================ */
 export const CAST: Record<string, Character> = {
   lili: {
-    name: "Liliveth",
+    name: "Aziel",
     title: "THE LAST ROSE",
     sub: "Heir to a house the night forgot",
     img: "assets/sketches/character.png",
@@ -100,8 +100,8 @@ export const CAST: Record<string, Character> = {
       transform: "translateX(-50%)",
     },
   },
-  atlaz: {
-    name: "Atlaz",
+  atlas: {
+    name: "Atlas",
     title: "THE ONE WHO LOOKED UP",
     sub: "She caught a falling star and never let go",
     img: "assets/sketches/character_portrait.png",
@@ -149,16 +149,16 @@ export const MOODS: Record<string, Mood> = {
    Nudge fy if a face sits high/low after swapping art.
    ============================================================ */
 export const CAMERAS: Record<string, CameraShot> = {
-  // forest / Liliveth (full-body, face is high in frame)
+  // forest / Aziel (full-body, face is high in frame)
   forest_wide: { scale: 1.06, fx: 0.5, fy: 0.55, dur: 0 },
   lili_face:   { scale: 1.95, fx: 0.5, fy: 0.16, dur: 6.0 },
   lili_blade:  { scale: 1.5,  fx: 0.5, fy: 0.52, dur: 5.2 },
   lili_full:   { scale: 1.08, fx: 0.5, fy: 0.5,  dur: 6.0 },
 
-  // dusk / Atlaz (bust, face is upper-middle)
+  // dusk / Atlas (bust, face is upper-middle)
   dusk_wide:   { scale: 1.1,  fx: 0.5, fy: 0.45, dur: 0 },
-  atlaz_face:  { scale: 1.7,  fx: 0.5, fy: 0.33, dur: 5.2 },
-  atlaz_full:  { scale: 1.05, fx: 0.5, fy: 0.45, dur: 5.5 },
+  atlas_face:  { scale: 1.7,  fx: 0.5, fy: 0.33, dur: 5.2 },
+  atlas_full:  { scale: 1.05, fx: 0.5, fy: 0.45, dur: 5.5 },
 
   // dawn (no character — landscape)
   dawn_wide:   { scale: 1.04, fx: 0.5, fy: 0.5,  dur: 0 },
@@ -177,14 +177,14 @@ export const CAMERAS: Record<string, CameraShot> = {
 export const STORY: Beat[] = [
   { t: "title" },
 
-  // ---- Act I — the misty forest, Liliveth ----
+  // ---- Act I — the misty forest, Aziel ----
   {
     t: "line", who: "lili", scene: "forest", cam: "forest_wide", mood: "nocturne", ch: 0,
     text: "You found the door. Most people pass a dark wood and decide the dark is all there is.",
   },
   {
     t: "line", who: "lili", cam: "lili_face", mood: "nocturne", name: true,
-    text: "I'm Liliveth. The last of a name no one says aloud anymore.",
+    text: "I'm Aziel. The last of a name no one says aloud anymore.",
   },
   {
     t: "line", who: "lili", cam: "lili_face", mood: "nocturne",
@@ -215,17 +215,17 @@ export const STORY: Beat[] = [
   // ---- bridge into the twilight ----
   { t: "center", scene: "dusk", mood: "frost", ch: 1, text: "That same night — beneath the same broken sky…" },
 
-  // ---- Act II — the cold twilight, Atlaz ----
+  // ---- Act II — the cold twilight, Atlas ----
   {
-    t: "line", who: "atlaz", cam: "dusk_wide", mood: "frost",
+    t: "line", who: "atlas", cam: "dusk_wide", mood: "frost",
     text: "Shh — don't move. You'll scare it off.",
   },
   {
-    t: "line", who: "atlaz", cam: "atlaz_face", mood: "storm", name: true,
+    t: "line", who: "atlas", cam: "atlas_face", mood: "storm", name: true,
     text: "There. Caught in my goggles — the last falling star that still remembers the way down.",
   },
   {
-    t: "line", who: "atlaz", cam: "atlaz_face", mood: "storm",
+    t: "line", who: "atlas", cam: "atlas_face", mood: "storm",
     text: "Everyone stopped looking up after that night. I never learned how.",
   },
   {
@@ -233,16 +233,16 @@ export const STORY: Beat[] = [
     options: [
       {
         label: "“Let it fall.”", mood: "dawn",
-        say: { who: "atlaz", cam: "atlaz_face", text: "…Maybe you're right. Maybe holding on is only a *slower* way of falling." },
+        say: { who: "atlas", cam: "atlas_face", text: "…Maybe you're right. Maybe holding on is only a *slower* way of falling." },
       },
       {
         label: "“Keep it safe.”", mood: "storm",
-        say: { who: "atlaz", cam: "atlaz_face", text: "That's what *she* said too — the lady with the lamp. We made the same promise once, her and I." },
+        say: { who: "atlas", cam: "atlas_face", text: "That's what *she* said too — the lady with the lamp. We made the same promise once, her and I." },
       },
     ],
   },
   {
-    t: "line", who: "atlaz", cam: "atlaz_full", mood: "frost",
+    t: "line", who: "atlas", cam: "atlas_full", mood: "frost",
     text: "One sky. Two girls who couldn't let go. …That sounds like the start of a story, doesn't it?",
   },
 
@@ -279,7 +279,7 @@ export const STORY: Beat[] = [
   },
   {
     t: "line", who: "jb", cam: "jb_face", mood: "spark",
-    text: "And the two girls you just met? They're *yours.* Your drawings. Even Atlaz — your name, your character, your goggles. I only lent them a little light and motion.",
+    text: "And the two girls you just met? They're *yours.* Your drawings. Even Atlas — your name, your character, your goggles. I only lent them a little light and motion.",
   },
   {
     t: "line", who: "jb", cam: "jb_full", mood: "spark",
