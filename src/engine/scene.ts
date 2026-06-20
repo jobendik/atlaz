@@ -101,19 +101,41 @@ export class Stage {
     return built;
   }
 
-  /** Crossfade to a scene; builds it lazily on first use. */
+  private freeTimer = 0;
+
+  /** Crossfade to a scene; builds it lazily on first use.
+   *  Crucially, once the previous scene has faded out we `display:none` it so
+   *  the browser drops its (many, large) GPU textures. Keeping every visited
+   *  scene composited at once is what exhausts mobile GPU memory — the cause of
+   *  both the transition crash and the flicker on phones. */
   show(id: string) {
     if (this.activeId === id) return;
     const next = this.build(id);
+    next.root.style.display = "";
     // make sure character stays on top of the scenes
     this.inner.appendChild(this.charGlow);
     this.inner.appendChild(this.charEl);
 
-    const prev = this.activeId ? this.scenes.get(this.activeId) : null;
+    const prevId = this.activeId;
+    const prev = prevId ? this.scenes.get(prevId) : null;
+
+    // only the incoming scene and the one fading out should be live
+    for (const [sid, sc] of this.scenes) {
+      if (sid !== id && sid !== prevId) sc.root.style.display = "none";
+    }
+
     requestAnimationFrame(() => {
       next.root.classList.add("show");
       if (prev) prev.root.classList.remove("show");
     });
+
+    // drop the faded-out scene's textures after the 1.5s crossfade completes
+    clearTimeout(this.freeTimer);
+    if (prev) {
+      this.freeTimer = window.setTimeout(() => {
+        if (this.activeId !== prevId) prev.root.style.display = "none";
+      }, 1700);
+    }
     this.activeId = id;
   }
 
