@@ -1,0 +1,15 @@
+node_modules
+dist
+*.local
+.DS_Store
+_preview_*.png
+_shots/
+_chk/
+
+# raw source asset packs (the used copies live in public/assets) — keep repo lean
+/The Dawn/
+/Parallax Forest Background (Seamless)/
+
+# assets present on disk but not used by the teaser (kept out of the deploy)
+public/assets/cave/
+public/assets/sfx/
