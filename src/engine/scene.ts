@@ -68,6 +68,7 @@ export class Stage {
     root.className = "scene";
     if (def.filter) root.style.filter = def.filter;
     const layers: BuiltLayer[] = [];
+    // NOTE: a static `overlay` tint is appended after the layers below.
     for (const L of def.layers) {
       const el = document.createElement("div");
       el.className = scroll ? "layer scroll" : "layer";
@@ -95,47 +96,47 @@ export class Stage {
       root.appendChild(el);
       layers.push({ el, depth: L.depth, drift: L.drift || 0, tileW: 0, tile });
     }
+    // static, non-transformed colour wash baked over the layers — used to
+    // recolour a scene (e.g. warm dawn -> cold twilight) WITHOUT a per-frame
+    // CSS filter, which would re-rasterise the whole moving scene every frame.
+    if (def.overlay) {
+      const tint = document.createElement("div");
+      tint.className = "sceneTint";
+      tint.style.background = def.overlay;
+      root.appendChild(tint);
+    }
     this.inner.appendChild(root);
     const built = { root, layers, scroll };
     this.scenes.set(id, built);
     return built;
   }
 
-  private freeTimer = 0;
-
-  /** Crossfade to a scene; builds it lazily on first use.
-   *  Crucially, once the previous scene has faded out we `display:none` it so
-   *  the browser drops its (many, large) GPU textures. Keeping every visited
-   *  scene composited at once is what exhausts mobile GPU memory — the cause of
-   *  both the transition crash and the flicker on phones. */
+  /** Switch to a scene; builds it lazily on first use.
+   *
+   *  HARD SWAP (not a crossfade): the moment we change scenes we `display:none`
+   *  every other scene, so only ONE scene is ever in the render tree. The new
+   *  scene then fades up from black via its CSS opacity transition. Compositing
+   *  two full scenes (each = many large GPU layers, one under a per-frame CSS
+   *  filter) at the same time was what crashed phones and strobed on desktop. */
   show(id: string) {
     if (this.activeId === id) return;
     const next = this.build(id);
-    next.root.style.display = "";
-    // make sure character stays on top of the scenes
+
+    // tear every other scene out of the render tree immediately
+    for (const [sid, sc] of this.scenes) {
+      if (sid === id) continue;
+      sc.root.classList.remove("show");
+      sc.root.style.display = "none";
+    }
+
+    // make sure the character stays on top of the scenes
     this.inner.appendChild(this.charGlow);
     this.inner.appendChild(this.charEl);
 
-    const prevId = this.activeId;
-    const prev = prevId ? this.scenes.get(prevId) : null;
-
-    // only the incoming scene and the one fading out should be live
-    for (const [sid, sc] of this.scenes) {
-      if (sid !== id && sid !== prevId) sc.root.style.display = "none";
-    }
-
-    requestAnimationFrame(() => {
-      next.root.classList.add("show");
-      if (prev) prev.root.classList.remove("show");
-    });
-
-    // drop the faded-out scene's textures after the 1.5s crossfade completes
-    clearTimeout(this.freeTimer);
-    if (prev) {
-      this.freeTimer = window.setTimeout(() => {
-        if (this.activeId !== prevId) prev.root.style.display = "none";
-      }, 1700);
-    }
+    next.root.style.display = "";
+    next.root.classList.remove("show");
+    // next frame: fade the (now sole) scene in from black
+    requestAnimationFrame(() => next.root.classList.add("show"));
     this.activeId = id;
   }
 

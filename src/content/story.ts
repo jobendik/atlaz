@@ -48,7 +48,10 @@ export const SCENES: Record<string, Scene> = {
     id: "dusk",
     music: "assets/audio/Beneath_the_Damp_Stone.mp3",
     scroll: true,
-    filter: "saturate(0.7) brightness(0.66) hue-rotate(192deg)",
+    // cold-twilight recolour as a STATIC wash (no per-frame CSS filter):
+    // a deep teal-indigo veil pulls the warm dawn art into a broken night.
+    overlay:
+      "linear-gradient(180deg, rgba(18,40,72,0.50) 0%, rgba(12,26,54,0.62) 55%, rgba(8,16,38,0.72) 100%)",
     layers: [
       { src: "assets/dawn/1.png", depth: 0.0 },
       { src: "assets/dawn/2.png", depth: 0.05 },

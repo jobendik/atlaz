@@ -30,10 +30,17 @@ export interface Scene {
    */
   scroll?: boolean;
   /**
-   * optional CSS filter applied to the whole scene to recolor its lighting
-   * (e.g. shift a warm dawn pack to a cool night). Static -> no flicker.
+   * optional CSS filter applied to the whole scene to recolor its lighting.
+   * AVOID on scenes whose layers move every frame — the filter re-rasterises
+   * the whole scene per frame (GPU crash/strobe). Prefer `overlay` instead.
    */
   filter?: string;
+  /**
+   * optional static colour wash (any CSS background value) baked over the
+   * layers to recolour the scene cheaply — no per-frame cost. Use this to turn
+   * the warm dawn pack into a cold twilight, etc.
+   */
+  overlay?: string;
 }
 
 /** A drawn character that lives inside the scenes. */
